@@ -22,15 +22,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
         let width, height, ppi: Int32
         let hiDPI: Bool
         let description: String
-        init(_ width: Int32, _ height: Int32, _ ppi: Int32, _ hiDPI: Bool, _ description: String) {
+        let ref_rate: Int32
+        init(_ width: Int32, _ height: Int32, _ ppi: Int32, _ hiDPI: Bool, _ description: String, _ ref_rate: Int32) {
             self.width = width
             self.height = height
             self.ppi = ppi
             self.hiDPI = hiDPI
             self.description = description
+            self.ref_rate = ref_rate
+            
         }
-        init(_ width: Int, _ height: Int, _ ppi: Int, _ hiDPI: Bool, _ description: String) {
-            self.init(Int32(width), Int32(height), Int32(ppi), hiDPI, description)
+        init(_ width: Int, _ height: Int, _ ppi: Int, _ hiDPI: Bool, _ description: String, _ ref_rate: Int) {
+            self.init(Int32(width), Int32(height), Int32(ppi), hiDPI, description, Int32(ref_rate))
         }
     }
 
@@ -38,30 +41,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
       // List from https://en.wikipedia.org/wiki/Graphics_display_resolution and
       // https://www.theverge.com/tldr/2016/3/21/11278192/apple-iphone-ipad-screen-sizes-pixels-density-so-many-choices
 
-      Resolution(3440, 1440, 200, true,  "3440x1440"),
-      Resolution(5160, 2160, 200, true,  "5160x2160"),
-      Resolution(6016, 3384, 218, true,  "Apple Pro Display XDR"),
-      Resolution(5120, 2880, 218, true,  "27-inch iMac with Retina 5K display"),
-      Resolution(4096, 2304, 219, true,  "21.5-inch iMac with Retina 4K display"),
-      Resolution(3840, 2400, 200, true,  "WQUXGA"),
-      Resolution(3840, 2160, 200, true,  "UHD"),
-      Resolution(3840, 1600, 200, true,  "WQHD+, UW-QHD+"),
-      Resolution(3840, 1080, 200, true,  "DFHD"),
-      Resolution(3072, 1920, 226, true,  "16-inch MacBook Pro with Retina display"),
-      Resolution(2880, 1800, 220, true,  "15.4-inch MacBook Pro with Retina display"),
-      Resolution(2560, 1600, 227, true,  "WQXGA, 13.3-inch MacBook Pro with Retina display"),
-      Resolution(2560, 1440, 109, false, "27-inch Apple Thunderbolt display"),
-      Resolution(2304, 1440, 226, true,  "12-inch MacBook with Retina display"),
-      Resolution(2048, 1536, 150, false, "QXGA"),
-      Resolution(2048, 1152, 150, false, "QWXGA"),
-      Resolution(1920, 1200, 150, false, "WUXGA"),
-      Resolution(1600, 1200, 125, false, "UXGA"),
-      Resolution(1920, 1080, 102, false, "HD, 21.5-inch iMac"),
-      Resolution(1440, 900,  127, false, "WXGA+, 13.3-inch MacBook Air"),
-      Resolution(1400, 1050, 125, false, "SXGA+"),
-      Resolution(1366, 768,  135, false, "11.6-inch MacBook Air"),
-      Resolution(1280, 1024, 100, false, "SXGA"),
-      Resolution(1280, 800,  113, false, "13.3-inch MacBook Pro"),
+      Resolution(3440, 1440, 200, true,  "3440x1440", 60),
+      Resolution(3440, 1440, 200, true,  "3440x1440@100", 100),
+      Resolution(5160, 2160, 200, true,  "5160x2160", 60),
+      Resolution(5160, 2160, 200, true,  "5160x2160@100", 100),
+      Resolution(6016, 3384, 218, true,  "Apple Pro Display XDR", 60),
+      Resolution(5120, 2880, 218, true,  "27-inch iMac with Retina 5K display", 60),
+      Resolution(4096, 2304, 219, true,  "21.5-inch iMac with Retina 4K display", 60),
+      Resolution(3840, 2400, 200, true,  "WQUXGA", 60),
+      Resolution(3840, 2160, 200, true,  "UHD", 60),
+      Resolution(3840, 1600, 200, true,  "WQHD+, UW-QHD+", 60),
+      Resolution(3840, 1080, 200, true,  "DFHD", 60),
+      Resolution(3072, 1920, 226, true,  "16-inch MacBook Pro with Retina display", 60),
+      Resolution(2880, 1800, 220, true,  "15.4-inch MacBook Pro with Retina display", 60),
+      Resolution(2560, 1600, 227, true,  "WQXGA, 13.3-inch MacBook Pro with Retina display", 60),
+      Resolution(2560, 1440, 109, false, "27-inch Apple Thunderbolt display", 60),
+      Resolution(2304, 1440, 226, true,  "12-inch MacBook with Retina display", 60),
+      Resolution(2048, 1536, 150, false, "QXGA", 60),
+      Resolution(2048, 1152, 150, false, "QWXGA", 60),
+      Resolution(1920, 1200, 150, false, "WUXGA", 60),
+      Resolution(1600, 1200, 125, false, "UXGA", 60),
+      Resolution(1920, 1080, 102, false, "HD, 21.5-inch iMac", 60),
+      Resolution(1440, 900,  127, false, "WXGA+, 13.3-inch MacBook Air", 60),
+      Resolution(1400, 1050, 125, false, "SXGA+", 60),
+      Resolution(1366, 768,  135, false, "11.6-inch MacBook Air", 60),
+      Resolution(1280, 1024, 100, false, "SXGA", 60),
+      Resolution(1280, 800,  113, false, "13.3-inch MacBook Pro", 60),
     ]
 
     var activeDisplays = [Resolution]()
@@ -116,7 +121,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
                     activeDisplays.append(Resolution(Int32(mode.pixelWidth), Int32(mode.pixelHeight),
                                                      Int32(CGFloat(mode.pixelWidth) / size.width * 25.4),
                                                      mode.pixelWidth > mode.width,
-                                                     CGDisplayIsBuiltin(activeDisplayIDs[Int(i)]) != 0 ? "Built-in Display" : "Display #\(i)"))
+                                                     CGDisplayIsBuiltin(activeDisplayIDs[Int(i)]) != 0 ? "Built-in Display" : "Display #\(i)", 60))
                 }
             }
         }
@@ -139,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
 
         var i = 0
         for size in predefResolutions {
-            let item = NSMenuItem(title: "\(size.width)×\(size.height) (\(size.description))", action: #selector(newDisplay(_:)), keyEquivalent: "")
+            let item = NSMenuItem(title: "\(size.width)×\(size.height) (\(size.description)) (\(size.ref_rate))", action: #selector(newDisplay(_:)), keyEquivalent: "")
             item.tag = i
             newMenu.addItem(item)
             i += 1
@@ -173,7 +178,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
                                                       resolution.height,
                                                       resolution.ppi,
                                                       resolution.hiDPI,
-                                                      name) {
+                                                      name,
+                                                      resolution.ref_rate) {
                     virtualDisplays[virtualDisplayCounter] = VirtualDisplay(number: virtualDisplayCounter, display: display)
                     let menuItem = NSMenuItem(title: "\(name) (\(resolution.width)×\(resolution.height))",
                                                     action: #selector(deleteDisplay(_:)),
@@ -201,7 +207,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
                                                       peerDisplay.resolution.height,
                                                       peerDisplay.resolution.ppi,
                                                       peerDisplay.resolution.hiDPI,
-                                                      peerDisplay.resolution.description) {
+                                                      peerDisplay.resolution.description,
+                                                      peerDisplay.resolution.ref_rate) {
                     virtualDisplays[virtualDisplayCounter] = VirtualDisplay(number: virtualDisplayCounter, display: display)
                     let menuItem = NSMenuItem(title: peerDisplay.resolution.description,
                                               action: #selector(deleteDisplay(_:)),
@@ -340,16 +347,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
                         for i in 0...ndisplays-1 {
                             if let width = intInDict(dict, "width\(i)"),
                                let height = intInDict(dict, "height\(i)"),
+                               let ref_rate = intInDict(dict, "ref_rate\(i)"),
                                let ppi = intInDict(dict, "ppi\(i)"),
                                let hiDPI = intInDict(dict, "hidpi\(i)"),
                                let name = stringInDict(dict, "name\(i)") {
                                 let hiDPIString = hiDPI == 0 ? "" : " (Retina)"
                                 let title = "\(name) on \(sender.name): \(width) x \(height)\(hiDPIString)"
+                                
                                 let item = NSMenuItem(title: title, action: #selector(newAutoDisplay(_:)), keyEquivalent: "")
                                 item.tag = peerDisplayCounter
                                 peerDisplays[peerDisplayCounter] = PeerDisplay(number: peerDisplayCounter,
                                                                                peer: sender.name,
-                                                                               resolution: Resolution(width, height, ppi, hiDPI != 0, title))
+                                                                               resolution: Resolution(width, height, ppi, hiDPI != 0, title, ref_rate))
                                 autoMenu.addItem(item)
                                 autoSubmenu.isHidden = false
                                 peerDisplayCounter += 1
