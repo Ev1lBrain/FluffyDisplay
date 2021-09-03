@@ -38,6 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NetServiceDelegate, NetServi
       // List from https://en.wikipedia.org/wiki/Graphics_display_resolution and
       // https://www.theverge.com/tldr/2016/3/21/11278192/apple-iphone-ipad-screen-sizes-pixels-density-so-many-choices
 
+      Resolution(3440, 1440, 200, true,  "3440x1440"),
+      Resolution(5160, 2160, 200, true,  "5160x2160"),
       Resolution(6016, 3384, 218, true,  "Apple Pro Display XDR"),
       Resolution(5120, 2880, 218, true,  "27-inch iMac with Retina 5K display"),
       Resolution(4096, 2304, 219, true,  "21.5-inch iMac with Retina 4K display"),

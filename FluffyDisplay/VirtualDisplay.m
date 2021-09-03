@@ -51,7 +51,7 @@ id createVirtualDisplay(int width, int height, int ppi, BOOL hiDPI, NSString *na
     }
     CGVirtualDisplayMode *mode = [[CGVirtualDisplayMode alloc] initWithWidth:width
                                                                       height:height
-                                                                 refreshRate:60];
+                                                                 refreshRate:100];
     settings.modes = @[mode];
 
     if (![display applySettings:settings])
